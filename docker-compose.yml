@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: news_hub
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+
+  php:
+    build: ./news-hub-api
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    environment:
+      DB_HOST: db
+      DB_DATABASE: news_hub_api
+      DB_USERNAME: root
+      DB_PASSWORD:
+      APP_ENV: local
+      APP_DEBUG: true
+      APP_KEY: base64:3Bkmhg8xJMoPONJTddX/4qs5+PHwG1Cb6IHr6j35SkQ=
+    volumes:
+      - ./news-hub-api:/var/www/html
+
+  node:
+    build: ./news-hub-frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - php
+    environment:
+      REACT_APP_API_URL: http://php:8000
+    volumes:
+      - ./news-hub-frontend:/app
+
+  nginx:
+    image: nginx:latest
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+      - node
