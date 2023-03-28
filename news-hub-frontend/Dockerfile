@@ -1,21 +1,16 @@
+# Use an official Node.js runtime as a parent image
 FROM node:19-alpine
 
-# Create app directory
+# Set the working directory
 WORKDIR /app
 
-# Install app dependencies
-COPY package*.json ./
-RUN npm install
-
-# Copy app source code
+# Copy the app source code
 COPY . .
 
-# Build production version
-RUN npm run build
-
-# Serve the app using the serve package
-RUN npm install -g serve
-CMD serve -s build
+# Install app dependencies
+RUN npm install
 
 # Expose the app port
 EXPOSE 3000
+
+CMD ["npm", "run", "start"]

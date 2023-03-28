@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import {BrowserRouter as Router, Route, Routes, Navigate} from 'react-router-dom';
 import './App.css';
 import LoginPage from "./pages/LoginPage";
 import Logout from "./components/Logout";
@@ -13,26 +13,17 @@ function App() {
     const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
     console.log({isAuthenticated})
 
-    function ProtectedRoutes() {
-        return <>
-            <Route path="/dashboard" element={<HomePage/>}/>
-            <Route path="/logout" element={<Logout/>}/>
-            <Route path="/articles" element={<ArticleList/>}/>
-            <Route path="/preferences" element={<PreferencesPage/>}/>
-            <Route path="*" element={<Navigate to="/"/>}/>
-        </>;
-    }
-
     return (
         <Router>
             <Layout>
                 <Routes>
-                    <Route path="/" element={<Navigate to="/login" />} />
-                    {!isAuthenticated ? (
-                        <Route path="*" element={<Navigate to="/login" />} />
-                    ) : ProtectedRoutes()}
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/" element={<Navigate to="/login"/>}/>
+                    <Route path="/login" element={<LoginPage/>}/>
+                    <Route path="/register" element={<RegisterPage/>}/>
+                    <Route path="/dashboard" element={<HomePage/>}/>
+                    <Route path="/logout" element={<Logout/>}/>
+                    <Route path="/articles" element={<ArticleList/>}/>
+                    <Route path="/preferences" element={<PreferencesPage/>}/>
                 </Routes>
             </Layout>
         </Router>

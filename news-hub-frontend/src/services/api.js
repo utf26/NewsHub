@@ -1,13 +1,20 @@
 import axios from 'axios';
 
+// axios.defaults.withCredentials = true;
+
 const api = axios.create({
-    baseURL: 'http://php:8000/api', // Replace with your backend API URL
+    baseURL: process.env.REACT_APP_API_URL + '/api', // Replace with your backend API URL
 });
 
 api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('authToken');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+    // const token = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
+    // if (token) {
+    //     config.headers['X-XSRF-TOKEN'] = token[1];
+    // }
+
+    const authToken = localStorage.getItem('authToken');
+    if (authToken) {
+        config.headers.Authorization = `Bearer ${authToken}`;
     }
     return config;
 }, (error) => {

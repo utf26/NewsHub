@@ -12,13 +12,14 @@ const LoginPage = () => {
         e.preventDefault();
 
         try {
+            // await api.get(`${process.env.REACT_APP_API_URL}/sanctum/csrf-cookie`);
             const response = await api.post('/login', {email, password});
 
             // Store the authentication token in local storage
             localStorage.setItem('authToken', response.data.access_token);
             localStorage.setItem('isAuthenticated', 'true');
 
-            // Redirect the user to the main page or handle the successful login
+            // Redirect the user to the dashboard
             console.log(response.data);
             navigate('/dashboard');
         } catch (err) {

@@ -6,7 +6,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: example
-      MYSQL_DATABASE: news_hub
+      MYSQL_DATABASE: news_hub_api
     volumes:
       - ./mysql-data:/var/lib/mysql
 
@@ -21,7 +21,7 @@ services:
       DB_HOST: db
       DB_DATABASE: news_hub_api
       DB_USERNAME: root
-      DB_PASSWORD:
+      DB_PASSWORD: example
       APP_ENV: local
       APP_DEBUG: true
       APP_KEY: base64:3Bkmhg8xJMoPONJTddX/4qs5+PHwG1Cb6IHr6j35SkQ=
@@ -36,7 +36,7 @@ services:
     depends_on:
       - php
     environment:
-      REACT_APP_API_URL: http://php:8000
+      REACT_APP_API_URL: http://localhost
     volumes:
       - ./news-hub-frontend:/app
 

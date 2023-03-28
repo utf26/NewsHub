@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import api from '../services/api';
 import SearchBar from "../components/ArticleList/SearchBar";
 import FilterBar from "../components/ArticleList/FilterBar";
@@ -15,7 +15,7 @@ const ArticleList = () => {
     const [categories, setCategories] = useState([]);
     const [sources, setSources] = useState([]);
 
-    useEffect(async () => {
+    useEffect(() => {
         const fetchSources = async () => {
             try {
                 const response = await api.get('/sources');
@@ -56,9 +56,9 @@ const ArticleList = () => {
             setLoading(false);
         };
 
-        await fetchSources();
-        await fetchCategories();
-        await fetchArticles();
+        fetchSources();
+        fetchCategories();
+        fetchArticles();
     }, [searchTerm, category, source]);
 
     const handleSearch = (search) => {
@@ -74,7 +74,7 @@ const ArticleList = () => {
         <div className="container mx-auto px-4 py-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                 <div className="col-span-2">
-                    <SearchBar onSearch={handleSearch} />
+                    <SearchBar onSearch={handleSearch}/>
                 </div>
                 <div className="hidden md:block">
                     <FilterBar
@@ -90,7 +90,7 @@ const ArticleList = () => {
                 ) : error ? (
                     <p>{error}</p>
                 ) : (
-                    <ArticleListResult articles={articles} />
+                    <ArticleListResult articles={articles}/>
                 )}
             </div>
         </div>
