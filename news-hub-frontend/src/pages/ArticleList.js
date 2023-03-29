@@ -126,11 +126,12 @@ const ArticleList = () => {
                         )}
                     </div>
             }
-
-            <Pagination data={responseData}
-                        currentPage={currentPage}
-                        handlePerPageChange={handlePerPageChange}
-                        handlePageChange={handlePageChange}/>
+            {
+                articles.length ?
+                    <Pagination data={responseData} currentPage={currentPage}
+                                handlePerPageChange={handlePerPageChange} handlePageChange={handlePageChange}/>
+                    : ''
+            }
         </div>
     );
 };

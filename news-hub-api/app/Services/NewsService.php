@@ -117,8 +117,9 @@ class NewsService
             }
 
             $author = null;
-            if (in_array('author', $article))
+            if (isset($article['author'])) {
                 $author = Author::firstOrCreate(['name' => $article['author']]);
+            }
 
             // Create a new Article model and fill in the data
             $newArticle               = new Article();

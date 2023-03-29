@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
@@ -48,7 +49,8 @@ class ArticleController extends Controller
                 $query->where('published_at', '>=', $start_date);
             })
             ->when($end_date, function ($query) use ($end_date) {
-                $query->where('published_at', '<=', $end_date);
+                $end_date = Carbon::parse($end_date)->addDay()->toDateString();
+                $query->where('published_at', '<', $end_date);
             })
             ->when(count($preferredSources), function ($query) use ($preferredSources) {
                 $query->whereIn('source_id', $preferredSources);
