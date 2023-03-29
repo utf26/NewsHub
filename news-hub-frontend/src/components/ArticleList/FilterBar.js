@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 
-const FilterBar = ({ categories, sources, onFilter }) => {
+const FilterBar = ({categories, sources, onFilter}) => {
     const [category, setCategory] = useState('')
     const [source, setSource] = useState('')
     const [startDate, setStartDate] = useState('')
@@ -67,7 +67,7 @@ const FilterBar = ({ categories, sources, onFilter }) => {
                 ))}
             </select>
             <label htmlFor="start-date" className="mr-2 mb-2 md:mb-0">
-                StartDate:
+                Start Date:
             </label>
             <input
                 type="date"
@@ -79,7 +79,7 @@ const FilterBar = ({ categories, sources, onFilter }) => {
             />
 
             <label htmlFor="end-date" className="mr-2 mb-2 md:mb-0 md:ml-4">
-                EndDate:
+                End Date:
             </label>
             <input
                 type="date"

@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import {useNavigate} from "react-router-dom";
 import Cookies from 'js-cookie';
 import api from '../services/api';
 
@@ -9,7 +8,6 @@ const LoginPage = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
 
-    const navigate = useNavigate();
     const handleLogin = async (e) => {
         e.preventDefault();
 
@@ -20,7 +18,7 @@ const LoginPage = () => {
             Cookies.set('session', response.data.access_token, { expires: 1 }); // Expires in 1 day
 
             // Redirect the user to the dashboard
-            navigate('/dashboard');
+            window.location.href ='/dashboard';
         } catch (err) {
             setError(err.response.data.message);
         }

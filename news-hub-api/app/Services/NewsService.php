@@ -46,7 +46,7 @@ class NewsService
             $articles = $response->json()['articles'];
 
             // Process and store articles
-            $this->processAndStoreArticles($articles, 'NewsAPI', $category->name, 'Babar');
+            $this->processAndStoreArticles($articles, 'NewsAPI', $category->name);
         }
     }
 
@@ -65,7 +65,7 @@ class NewsService
             $articles = $response->json()['response']['results'];
 
             // Process and store articles
-            $this->processAndStoreArticles($articles, 'The Guardian', $category->name, 'Babar');
+            $this->processAndStoreArticles($articles, 'The Guardian', $category->name);
         }
     }
 
@@ -84,7 +84,7 @@ class NewsService
             $articles = $response->json()['results'];
 
             // Process and store articles
-            $this->processAndStoreArticles($articles, 'The New York Times', $category->name, 'Babar');
+            $this->processAndStoreArticles($articles, 'The New York Times', $category->name);
         }
     }
 
@@ -95,15 +95,14 @@ class NewsService
      * @param $authorName
      * @return void
      */
-    public function processAndStoreArticles($articles, $sourceApiName, $categoryName, $authorName): void
+    public function processAndStoreArticles($articles, $sourceApiName, $categoryName): void
     {
         // Find or create the source, category and author in the database
         $source   = Source::firstOrCreate(['name' => $sourceApiName]);
         $category = Category::firstOrCreate(['name' => $categoryName]);
-        $author = Author::firstOrCreate(['name' => $authorName]);
 
         // If the source, category or author is not found, return early
-        if (!$source || !$category || !$author) {
+        if (!$source || !$category) {
             return;
         }
 
@@ -117,11 +116,15 @@ class NewsService
                 continue;
             }
 
+            $author = null;
+            if (in_array('author', $article))
+                $author = Author::firstOrCreate(['name' => $article['author']]);
+
             // Create a new Article model and fill in the data
             $newArticle               = new Article();
             $newArticle->source_id    = $source->id;
             $newArticle->category_id  = $category->id;
-            $newArticle->author_id    = $author->id;
+            $newArticle->author_id    = $author ? $author->id : null;
             $newArticle->title        = $article['title'] ?? $article['webTitle'] ?? '';
             $newArticle->description  = $article['description'] ?? $article['abstract'] ?? '';
             $newArticle->content      = $article['content'] ?? '';

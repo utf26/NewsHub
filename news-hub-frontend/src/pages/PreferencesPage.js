@@ -49,9 +49,10 @@ const PreferencesPage = () => {
         const fetchPreferences = async () => {
             try {
                 const response = await api.get('/user/preferences');
-                const {categories: selectedCatIds, sources: selectedSourceIds} = response.data;
+                const {categories: selectedCatIds, sources: selectedSourceIds, authors: selectedAuthorIds} = response.data;
                 setSelectedCategories(selectedCatIds);
                 setSelectedSources(selectedSourceIds);
+                setSelectedAuthors(selectedAuthorIds);
             } catch (err) {
                 handleError('Failed to fetch preferences')
             }

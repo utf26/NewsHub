@@ -3,6 +3,7 @@ import api from '../services/api';
 import SearchBar from '../components/ArticleList/SearchBar';
 import FilterBar from '../components/ArticleList/FilterBar';
 import ArticleListResult from '../components/ArticleList/ArticleListResult';
+import Pagination from "../components/ArticleList/pagination";
 
 const ArticleList = () => {
     const [articles, setArticles] = useState([]);
@@ -15,6 +16,9 @@ const ArticleList = () => {
     const [sources, setSources] = useState([]);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [responseData, setResponseData] = useState({});
+    const [perPage, setPerPage] = useState(10);
 
     const fetchSources = async () => {
         try {
@@ -47,9 +51,12 @@ const ArticleList = () => {
                     source: source,
                     start_date: startDate,
                     end_date: endDate,
+                    page: currentPage,
+                    perPage: perPage
                 },
             });
             setArticles(response.data.data);
+            setResponseData(response.data);
         } catch (err) {
             console.log(err);
             setError('Failed to fetch articles');
@@ -65,7 +72,7 @@ const ArticleList = () => {
 
     useEffect(() => {
         fetchArticles();
-    }, [searchTerm, category, source, startDate, endDate]);
+    }, [searchTerm, category, source, startDate, endDate, currentPage, perPage]);
 
     const handleSearch = (search) => {
         setSearchTerm(search);
@@ -76,6 +83,16 @@ const ArticleList = () => {
         setSource(filterSource);
         setStartDate(filterStartDate);
         setEndDate(filterEndDate);
+        setCurrentPage(1);
+    };
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
+    const handlePerPageChange = (event) => {
+        setPerPage(Number(event.target.value));
+        setCurrentPage(1);
     };
 
     function noArticlesFound() {
@@ -108,8 +125,12 @@ const ArticleList = () => {
                             <ArticleListResult articles={articles}/>
                         )}
                     </div>
-
             }
+
+            <Pagination data={responseData}
+                        currentPage={currentPage}
+                        handlePerPageChange={handlePerPageChange}
+                        handlePageChange={handlePageChange}/>
         </div>
     );
 };

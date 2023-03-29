@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 
-const SearchBar = ({ handleSearch }) => {
+const SearchBar = ({ onSearch }) => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        handleSearch(searchTerm);
+        onSearch(searchTerm);
     };
 
     return (

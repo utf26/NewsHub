@@ -21,7 +21,11 @@ api.interceptors.response.use(
     response => response,
     error => {
         if (error.response.status === 401) {
+            // Remove session token from cookies or local storage
             Cookies.remove('session');
+
+            // Redirect to login page
+            window.location.href = '/login';
         }
         return Promise.reject(error);
     },

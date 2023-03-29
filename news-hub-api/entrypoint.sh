@@ -25,5 +25,7 @@ then
     php artisan db:seed --class=CategorySeeder
 fi
 
+php artisan fetch:articles
+
 # Start the Laravel application
 php artisan serve --host=0.0.0.0 --port=8000

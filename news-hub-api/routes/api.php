@@ -2,9 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserPreferencesController;
 use App\Http\Controllers\SourceController;
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\AuthorsController;
 use App\Http\Controllers\CategoryController;
 
 /*
@@ -24,13 +25,12 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    Route::apiResource('sources', SourceController::class)->except(['store', 'update', 'destroy']);
-    Route::apiResource('categories', CategoryController::class)->except(['store', 'update', 'destroy']);
+    Route::get('sources', [SourceController::class, 'index']);
+    Route::get('categories', [CategoryController::class, 'index']);
+    Route::get('authors', [AuthorsController::class, 'index']);
+    Route::get('articles', [ArticleController::class, 'index']);
 
-    Route::apiResource('articles', ArticleController::class)->only(['index']);
-    Route::get('articles/personalized', [ArticleController::class, 'personalized']);
-
-    Route::get('/user/preferences', [UserController::class, 'Preferences']);
-    Route::put('/user/preferences', [UserController::class, 'updatePreferences']);
+    Route::get('/user/preferences', [UserPreferencesController::class, 'index']);
+    Route::put('/user/preferences', [UserPreferencesController::class, 'update']);
 
 });

@@ -16,26 +16,4 @@ class CategoryController extends Controller
         $categories = Category::all();
         return response()->json($categories);
     }
-
-    /**
-     * @param Request $request
-     * @param Category $category
-     * @return JsonResponse
-     */
-    public function addPreferredCategory(Request $request, Category $category): JsonResponse
-    {
-        $request->user()->preferredCategories()->syncWithoutDetaching([$category->id]);
-        return response()->json(['message' => 'Preferred category added']);
-    }
-
-    /**
-     * @param Request $request
-     * @param Category $category
-     * @return JsonResponse
-     */
-    public function removePreferredCategory(Request $request, Category $category): JsonResponse
-    {
-        $request->user()->preferredCategories()->detach($category->id);
-        return response()->json(['message' => 'Preferred category removed']);
-    }
 }
