@@ -1,5 +1,5 @@
 /* The container for the article cards */
-#ArticleListResult div {
+#ArticleListResult {
     display: grid;
     grid-template-columns: repeat(1, minmax(0, 1fr));
     gap: 1.5rem;
@@ -7,13 +7,41 @@
 
 /* Responsive grid layout for larger screens */
 @media screen and (min-width: 768px) {
-    #ArticleListResult div {
+    #ArticleListResult {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
 @media screen and (min-width: 1024px) {
-    #ArticleListResult div {
+    #ArticleListResult {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
+}
+
+/* Article card */
+.ArticleCard {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+}
+
+.ArticleCard h3 {
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.ArticleCard p {
+    font-size: 1rem;
+    color: #374151;
+    margin-bottom: 1rem;
+}
+
+.ArticleCard .flex {
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ArticleCard .text-gray-600 {
+    font-size: 0.875rem;
 }

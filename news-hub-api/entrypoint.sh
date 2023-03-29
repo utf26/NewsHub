@@ -11,5 +11,19 @@ echo "CREATE DATABASE IF NOT EXISTS $DB_DATABASE" | mysql -h $DB_HOST -u $DB_USE
 # Run migrations
 php artisan migrate
 
+# Check if sources table is empty
+if [ $(mysql -h $DB_HOST -u $DB_USERNAME -p$DB_PASSWORD -D $DB_DATABASE -se "SELECT COUNT(*) FROM sources;") -eq 0 ]
+then
+    # Run sources seeder
+    php artisan db:seed --class=SourcesTableSeeder
+fi
+
+# Check if categories table is empty
+if [ $(mysql -h $DB_HOST -u $DB_USERNAME -p$DB_PASSWORD -D $DB_DATABASE -se "SELECT COUNT(*) FROM categories;") -eq 0 ]
+then
+    # Run categories seeder
+    php artisan db:seed --class=CategorySeeder
+fi
+
 # Start the Laravel application
 php artisan serve --host=0.0.0.0 --port=8000

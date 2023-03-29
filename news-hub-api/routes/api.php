@@ -26,16 +26,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::apiResource('sources', SourceController::class)->except(['store', 'update', 'destroy']);
     Route::apiResource('categories', CategoryController::class)->except(['store', 'update', 'destroy']);
+
     Route::apiResource('articles', ArticleController::class)->only(['index']);
-
-    // User preference routes
-    Route::post('/preferred-sources/{source}', [SourceController::class, 'addPreferredSource']);
-    Route::delete('/preferred-sources/{source}', [SourceController::class, 'removePreferredSource']);
-    Route::post('/preferred-categories/{category}', [CategoryController::class, 'addPreferredCategory']);
-    Route::delete('/preferred-categories/{category}', [CategoryController::class, 'removePreferredCategory']);
-
     Route::get('articles/personalized', [ArticleController::class, 'personalized']);
 
+    Route::get('/user/preferences', [UserController::class, 'Preferences']);
     Route::put('/user/preferences', [UserController::class, 'updatePreferences']);
 
 });

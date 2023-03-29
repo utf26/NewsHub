@@ -70,4 +70,10 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Category::class, 'user_categories');
     }
+
+    public function preferredAuthors(): BelongsToMany
+    {
+        return $this->belongsToMany(Author::class, 'user_preferred_authors');
+    }
+
 }

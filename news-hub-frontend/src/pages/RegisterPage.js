@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import api from '../services/api';
 import {useNavigate} from "react-router-dom";
+import Cookies from "js-cookie";
 
 const RegisterPage = () => {
     const [name, setName] = useState('');
@@ -26,12 +27,11 @@ const RegisterPage = () => {
                 password,
                 password_confirmation: passwordConfirmation
             });
-            // Store the authentication token in local storage
-            localStorage.setItem('authToken', response.data.access_token);
-            localStorage.setItem('isAuthenticated', 'true');
+
+            // Set a session cookie with the token or user ID after a successful login
+            Cookies.set('session', response.data.access_token, { expires: 1 }); // Expires in 1 day
 
             // Redirect the user to the login page or handle the successful registration
-            console.log(response.data);
             navigate('/dashboard');
         } catch (err) {
             setError(err.response.data.message);

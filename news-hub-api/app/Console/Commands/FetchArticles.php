@@ -2,13 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Article;
 use App\Services\NewsService;
 use Illuminate\Console\Command;
 
-/**
- *
- */
 class FetchArticles extends Command
 {
     /**
@@ -45,6 +41,8 @@ class FetchArticles extends Command
      */
     public function handle(): void
     {
+        $this->info('Fetching articles...');
+
         // Call the fetchArticles method from the NewsService
         $this->newsService->fetchArticles();
 

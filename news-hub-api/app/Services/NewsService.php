@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Source;
+use App\Models\Author;
 use App\Models\Category;
 use App\Models\Article;
 use Illuminate\Support\Carbon;
@@ -15,20 +16,26 @@ class NewsService
      */
     public function fetchArticles(): void
     {
-        // Fetch articles from NewsAPI
-        $this->fetchFromNewsAPI();
+        $categories = Category::all();
 
-        // Fetch articles from The Guardian API
-        $this->fetchFromTheGuardianAPI();
+        foreach ($categories as $category) {
+            // Fetch articles from NewsAPI
+            $this->fetchFromNewsAPI($category);
 
-        // Fetch articles from The New York Times API
-        $this->fetchFromNYTimesAPI();
+            // Fetch articles from The Guardian API
+            $this->fetchFromTheGuardianAPI($category);
+
+            // Fetch articles from The New York Times API
+            $this->fetchFromNYTimesAPI($category);
+        }
     }
 
+
     /**
+     * @param Category $category
      * @return void
      */
-    private function fetchFromNewsAPI(): void
+    private function fetchFromNewsAPI(Category $category): void
     {
         $apiKey = config('services.newsapi.key');
         $url    = "https://newsapi.org/v2/top-headlines?country=us&apiKey={$apiKey}";
@@ -39,14 +46,15 @@ class NewsService
             $articles = $response->json()['articles'];
 
             // Process and store articles
-            $this->processAndStoreArticles($articles, 'newsapi', 'general');
+            $this->processAndStoreArticles($articles, 'NewsAPI', $category->name, 'Babar');
         }
     }
 
     /**
+     * @param Category $category
      * @return void
      */
-    private function fetchFromTheGuardianAPI(): void
+    private function fetchFromTheGuardianAPI(Category $category): void
     {
         $apiKey = config('services.guardian.key');
         $url    = "https://content.guardianapis.com/search?api-key={$apiKey}";
@@ -57,14 +65,15 @@ class NewsService
             $articles = $response->json()['response']['results'];
 
             // Process and store articles
-            $this->processAndStoreArticles($articles, 'the-guardian', 'general');
+            $this->processAndStoreArticles($articles, 'The Guardian', $category->name, 'Babar');
         }
     }
 
     /**
+     * @param Category $category
      * @return void
      */
-    private function fetchFromNYTimesAPI(): void
+    private function fetchFromNYTimesAPI(Category $category): void
     {
         $apiKey = config('services.nytimes.key');
         $url    = "https://api.nytimes.com/svc/topstories/v2/home.json?api-key={$apiKey}";
@@ -75,31 +84,33 @@ class NewsService
             $articles = $response->json()['results'];
 
             // Process and store articles
-            $this->processAndStoreArticles($articles, 'nytimes', 'general');
+            $this->processAndStoreArticles($articles, 'The New York Times', $category->name, 'Babar');
         }
     }
 
     /**
      * @param $articles
-     * @param $sourceApiId
+     * @param $sourceApiName
      * @param $categoryName
+     * @param $authorName
      * @return void
      */
-    public function processAndStoreArticles($articles, $sourceApiId, $categoryName): void
+    public function processAndStoreArticles($articles, $sourceApiName, $categoryName, $authorName): void
     {
-        // Find the source and category in the database
-        $source   = Source::where('api_id', $sourceApiId)->first();
-        $category = Category::where('name', $categoryName)->first();
+        // Find or create the source, category and author in the database
+        $source   = Source::firstOrCreate(['name' => $sourceApiName]);
+        $category = Category::firstOrCreate(['name' => $categoryName]);
+        $author = Author::firstOrCreate(['name' => $authorName]);
 
-        // If the source or category is not found, return early
-        if (!$source || !$category) {
+        // If the source, category or author is not found, return early
+        if (!$source || !$category || !$author) {
             return;
         }
 
         // Loop through the articles and store them in the database
         foreach ($articles as $article) {
             // Check if the article already exists in the database
-            $existingArticle = Article::where('url', $article['url'])->first();
+            $existingArticle = Article::where('url', $article['url'] ?? $article['webUrl'] ?? $article['apiUrl'])->first();
 
             // If the article already exists, skip it
             if ($existingArticle) {
@@ -110,13 +121,14 @@ class NewsService
             $newArticle               = new Article();
             $newArticle->source_id    = $source->id;
             $newArticle->category_id  = $category->id;
-            $newArticle->title        = $article['title'];
-            $newArticle->description  = $article['description'];
-            $newArticle->content      = $article['content'];
-            $newArticle->author       = $article['author'];
-            $newArticle->url          = $article['url'];
-            $newArticle->url_to_image = $article['urlToImage'];
-            $newArticle->published_at = Carbon::parse($article['publishedAt']);
+            $newArticle->author_id    = $author->id;
+            $newArticle->title        = $article['title'] ?? $article['webTitle'] ?? '';
+            $newArticle->description  = $article['description'] ?? $article['abstract'] ?? '';
+            $newArticle->content      = $article['content'] ?? '';
+            $newArticle->author       = $article['author'] ?? '';
+            $newArticle->url          = $article['url'] ?? $article['webUrl'] ?? $article['apiUrl'];
+            $newArticle->url_to_image = $article['urlToImage'] ?? '';
+            $newArticle->published_at = Carbon::parse($article['publishedAt'] ?? $article['webPublicationDate'] ?? '');
 
             // Save the new article to the database
             $newArticle->save();

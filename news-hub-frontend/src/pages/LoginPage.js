@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
-import api from '../services/api';
 import {useNavigate} from "react-router-dom";
+import Cookies from 'js-cookie';
+import api from '../services/api';
+
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
@@ -12,15 +14,12 @@ const LoginPage = () => {
         e.preventDefault();
 
         try {
-            // await api.get(`${process.env.REACT_APP_API_URL}/sanctum/csrf-cookie`);
             const response = await api.post('/login', {email, password});
 
-            // Store the authentication token in local storage
-            localStorage.setItem('authToken', response.data.access_token);
-            localStorage.setItem('isAuthenticated', 'true');
+            // Set a session cookie with the token or user ID after a successful login
+            Cookies.set('session', response.data.access_token, { expires: 1 }); // Expires in 1 day
 
             // Redirect the user to the dashboard
-            console.log(response.data);
             navigate('/dashboard');
         } catch (err) {
             setError(err.response.data.message);

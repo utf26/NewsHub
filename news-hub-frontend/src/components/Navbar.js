@@ -1,41 +1,93 @@
-import { Link } from 'react-router-dom';
-import React from "react";
+import {Link, useLocation, useNavigate} from 'react-router-dom';
+import React, {useEffect, useState} from "react";
 import Logout from "./Logout";
+import Cookies from "js-cookie";
 
 const Navbar = () => {
-    const isAuthenticated = localStorage.getItem('isAuthenticated');
+    const [session, setSession] = useState(Cookies.get('session'));
+    const [loggedIn, setLoggedIn] = useState(session !== undefined);
+
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        setSession(Cookies.get('session'));
+    }, [session]);
+
+    const handleLogout = () => {
+        Cookies.remove('session');
+        setLoggedIn(false);
+        setSession(null);
+        // Redirect to login page
+        navigate('/login');
+    };
 
     return (
         <nav>
             <ul className="flex space-x-4">
-                {!isAuthenticated && (
-                    <li>
-                        <Link to="/dashboard" className="text-blue-500">Home</Link>
+                {!loggedIn && (
+                    <li className="text-blue-500">
+                        <Link
+                            to="/login"
+                            className={`block py-2 px-2 rounded ${
+                                location.pathname === '/login' ? 'bg-blue-500 text-white' : ''
+                            }`}
+                        >
+                            Login
+                        </Link>
                     </li>
                 )}
-                {!isAuthenticated && (
-                    <li>
-                        <Link to="/login" className="text-blue-500">Login</Link>
+                {!loggedIn && (
+                    <li className="text-blue-500">
+                        <Link
+                            to="/register"
+                            className={`block py-2 px-2 rounded ${
+                                location.pathname === '/register' ? 'bg-blue-500 text-white' : ''
+                            }`}
+                        >
+                            Register
+                        </Link>
                     </li>
                 )}
-                {!isAuthenticated && (
-                    <li>
-                        <Link to="/register" className="text-blue-500">Register</Link>
+                {loggedIn && (
+                    <li className="text-blue-500">
+                        <Link
+                            to="/dashboard"
+                            className={`block py-2 px-2 rounded ${
+                                location.pathname === '/dashboard' ? 'bg-blue-500 text-white' : ''
+                            }`}
+                        >
+                            Home
+                        </Link>
                     </li>
                 )}
-                {isAuthenticated && (
-                    <li>
-                        <Link to="/articles" className="text-blue-500">Articles</Link>
+                {loggedIn && (
+                    <li className="text-blue-500">
+                        <Link
+                            to="/articles"
+                            className={`block py-2 px-2 rounded ${
+                                location.pathname === '/articles' ? 'bg-blue-500 text-white' : ''
+                            }`}
+                        >
+                            Articles
+                        </Link>
                     </li>
                 )}
-                {isAuthenticated && (
-                    <li>
-                        <Link to="/preferences" className="text-blue-500">Preferences</Link>
+                {loggedIn && (
+                    <li className="text-blue-500">
+                        <Link
+                            to="/preferences"
+                            className={`block py-2 px-2 rounded ${
+                                location.pathname === '/preferences' ? 'bg-blue-500 text-white' : ''
+                            }`}
+                        >
+                            Preferences
+                        </Link>
                     </li>
                 )}
-                {isAuthenticated && (
-                    <li>
-                        <Logout />
+                {loggedIn && (
+                    <li className="text-blue-500">
+                        <Logout onLogout={handleLogout} />
                     </li>
                 )}
             </ul>

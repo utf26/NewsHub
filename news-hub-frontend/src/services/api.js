@@ -1,24 +1,31 @@
 import axios from 'axios';
-
-// axios.defaults.withCredentials = true;
+import Cookies from "js-cookie";
 
 const api = axios.create({
     baseURL: process.env.REACT_APP_API_URL + '/api', // Replace with your backend API URL
 });
 
 api.interceptors.request.use((config) => {
-    // const token = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
-    // if (token) {
-    //     config.headers['X-XSRF-TOKEN'] = token[1];
-    // }
+    const authToken = Cookies.get('session');
 
-    const authToken = localStorage.getItem('authToken');
     if (authToken) {
         config.headers.Authorization = `Bearer ${authToken}`;
     }
     return config;
 }, (error) => {
+    console.error('Error in request interceptor:', error);
     return Promise.reject(error);
 });
+
+api.interceptors.response.use(
+    response => response,
+    error => {
+        if (error.response.status === 401) {
+            Cookies.remove('session');
+        }
+        return Promise.reject(error);
+    },
+);
+
 
 export default api;
